@@ -1,0 +1,44 @@
+[book]
+authors = ["Olaf Kolkman (editor)"]
+language = "en"
+multilingual = false
+src = "src"
+title = "The IETF Ornithology"
+
+
+
+[output.html]
+
+git-repository-url = "https://github.com/kolkman/"
+pdf-download-url = "../pandoc/pdf/output.pdf"
+
+
+[output.html.print]
+enable = false    # include support for printable output
+
+
+
+[output.pandoc.profile.pdf]
+
+pdf-engine = "lualatex"
+output-file = "IETF-Ornithology.pdf"
+to = "latex"
+table-of-contents = true
+standalone = true
+
+template = "ISOCTemplate.tex"
+
+
+[output.pandoc.profile.pdf.variables]
+logo = "ISOCShield.png"
+subtitle = "A Currated Overview of Public Policy Aspects in IETF Work"
+graphics = true
+standalone = true # produce output with an appropriate header and footer
+titlegraphic= "ISOCLogo.png"
+mainfont= "Hind-Light.ttf"
+documentclass= "article"
+toc-depth=4
+
+pagestyle= "headings"
+
+colorlinks=true
