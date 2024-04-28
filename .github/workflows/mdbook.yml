@@ -1,0 +1,114 @@
+# Sample workflow for building and deploying a mdBook site to GitHub Pages
+#
+# To get started with mdBook see: https://rust-lang.github.io/mdBook/index.html
+#
+#  We wanted to run 
+        # sudo apt-get install  texlive-luatex texlive-latex-base  texlive-science texlive-latex-extra    	
+        # We need texlive 2023 at least and that is not yet available in ubuntu 22.04 - that is why the latex install is excessive
+
+
+
+name: Deploy mdBook site to Pages
+
+on:
+  # Runs on pushes targeting the default branch
+  # push:
+  #   branches: ["main"]
+  
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  # Build job
+  build:
+    runs-on: ubuntu-latest
+    env:
+      MDBOOK_VERSION: 0.4.37
+      MDBOOK_PANDOC_VERSION: 0.6.4
+    steps:
+
+      - name: Install lualatex        
+        run: |
+           curl -L -o install-tl-unx.tar.gz ftp://tug.org/historic/systems/texlive/2023/tlnet-final/install-tl-unx.tar.gz 
+           zcat < install-tl-unx.tar.gz | tar xf -
+           cd install-tl-2*
+           echo "selected_scheme scheme-basic" > install.profile
+           echo "tlpdbopt_install_docfiles 0" >> install.profile
+           echo "tlpdbopt_install_srcfiles 0" >> install.profile
+           echo "tlpdbopt_autobackup 0" >> install.profile
+           echo "tlpdbopt_sys_bin /usr/bin" >> install.profile
+           sudo perl ./install-tl --no-interaction  -profile install.profile -repository ftp://tug.org/historic/systems/texlive/2023/tlnet-final
+           ls -l /usr/local/texlive/2023/bin
+           export PATH=/usr/local/texlive/2023/bin/x86_64-linux:${PATH}
+           sudo /usr/local/texlive/2023/bin/x86_64-linux/tlmgr install unicode-math
+           sudo /usr/local/texlive/2023/bin/x86_64-linux/tlmgr install lualatex-math
+           sudo /usr/local/texlive/2023/bin/x86_64-linux/tlmgr install xcolor
+           sudo /usr/local/texlive/2023/bin/x86_64-linux/tlmgr install luatexbase
+           sudo /usr/local/texlive/2023/bin/x86_64-linux/tlmgr install selnolig
+           sudo /usr/local/texlive/2023/bin/x86_64-linux/tlmgr install titling
+        
+           
+      - uses: actions/checkout@v4
+      - name: Install pandoc
+        run: |
+          wget -O pandoc.deb https://github.com/jgm/pandoc/releases/download/3.1.13/pandoc-3.1.13-1-amd64.deb
+          sudo dpkg -i $DEB pandoc.deb
+          
+
+      - name: Install mdBook
+        run: |
+          curl --proto '=https' --tlsv1.2 https://sh.rustup.rs -sSf -y | sh
+          rustup update
+          cargo install --version ${MDBOOK_VERSION} mdbook
+          cargo install --version ${MDBOOK_PANDOC_VERSION} mdbook-pandoc
+
+ 
+      - name: Install Google Fonts
+        run: |
+          wget -O Hind-Light.ttf https://github.com/google/fonts/raw/main/ofl/hind/Hind-Light.ttf
+          mkdir -p /usr/share/fonts/truetype/Hind/
+          cp Hind-Light.ttf /usr/share/fonts/truetype/Hind/
+          fc-cache -fv
+
+
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v5
+      - name: Build with mdBook
+        run: export PATH=/usr/local/texlive/2023/bin/x86_64-linux:${PATH} && mdbook build
+      - name: Copy the PDF to html root
+        run: cp ./book/pandoc/pdf/IETF-Ornithology.pdf ./book/html
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./book/html
+
+
+
+  # Deployment job
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+        with:
+          files: |
+            ./book/pandoc/pdf/IETF-Ornithology.pdf
+            
