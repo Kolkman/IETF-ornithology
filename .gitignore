@@ -1,6 +1,7 @@
-book/wordcount
-book/pandoc/pdf/src
+book
+book
 ISOCTemplate.log
 *~
 IETF119*
 ~*
+.DS_Store
