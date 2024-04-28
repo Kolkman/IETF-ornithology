@@ -9,8 +9,8 @@ title = "The IETF Ornithology"
 
 [output.html]
 
-git-repository-url = "https://github.com/kolkman/"
-pdf-download-url = "../pandoc/pdf/output.pdf"
+git-repository-url = "https://github.com/kolkman/IETF-ornithology/"
+pdf-download-url = "https://kolkman.github.io/IETF-ornithology/IETF-Ornithology.pdf"
 
 
 [output.html.print]
