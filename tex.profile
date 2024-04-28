@@ -1,4 +1,5 @@
 selected_scheme scheme-basic
+instopt_adjustpath 1
 tlpdbopt_install_docfiles 0
 tlpdbopt_install_srcfiles 0
 tlpdbopt_post_code 0
