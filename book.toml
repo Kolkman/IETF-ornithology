@@ -39,6 +39,8 @@ mainfont= "Hind-Light.ttf"
 documentclass= "article"
 toc-depth=4
 
+classoption= [ "a4paper" ]
+
 pagestyle= "headings"
 
 colorlinks=true
