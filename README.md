@@ -2,7 +2,7 @@
 
 The IETF Ornithology is an effort to allow crowdsourcing  the identification of public policy issues in IETF work.
 
-You can read the Ornithology through as a [web page](./book/html/index.html) or as a [pdf](book/pandoc/pdf/IETF-Ornithology.pdf)
+You can read the Ornithology through as a [web page](https://kolkman.github.io/IETF-ornithology/) or as a [pdf](https://kolkman.github.io/IETF-ornithology/IETF-Ornithology.pdf)
 
 The source for this document can be found in the [src directory](gitub.com/kolkman/ornithology/src) of the 
 [gitub.com/kolkman/ornithology/]() repository. Readers are encouraged to contribute. 

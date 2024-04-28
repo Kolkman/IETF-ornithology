@@ -253,6 +253,11 @@ svg#ISOCLogo  path {
     fill: var(--icons); /* changes the color to red */
   }
   
+  svg#ISOCLogo  path:hover {
+    fill: var(--icons-hover); /* changes the color to red */
+  }
+  
+
 
 svg#ISOCShield  path {
   fill: var(--icons); /* changes the color to red */
