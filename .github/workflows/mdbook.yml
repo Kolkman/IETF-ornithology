@@ -38,43 +38,46 @@ jobs:
       MDBOOK_VERSION: 0.4.37
       MDBOOK_PANDOC_VERSION: 0.6.4
     steps:
+      - uses: actions/checkout@v4
+
+      - name: Install mdBook
+        uses: actions-rs/toolchain@v1
+        with:
+            profile: minimal
+            toolchain: stable
+      - run: |       
+          cargo install --version ${MDBOOK_VERSION} mdbook
+          cargo install --version ${MDBOOK_PANDOC_VERSION} mdbook-pandoc
+
+
+      - name: Install pandoc
+        run: |
+          export ACTION_ARCH=`dpkg --print-architecture`
+          wget -O pandoc.deb https://github.com/jgm/pandoc/releases/download/3.1.13/pandoc-3.1.13-1-${ACTION_ARCH}.deb
+          sudo dpkg -i $DEB pandoc.deb
+
+
+
 
       - name: Install lualatex        
         run: |
            curl -L -o install-tl-unx.tar.gz ftp://tug.org/historic/systems/texlive/2023/tlnet-final/install-tl-unx.tar.gz 
            zcat < install-tl-unx.tar.gz | tar xf -
            cd install-tl-2*
-           echo "selected_scheme scheme-basic" > install.profile
-           echo "tlpdbopt_install_docfiles 0" >> install.profile
-           echo "tlpdbopt_install_srcfiles 0" >> install.profile
-           echo "tlpdbopt_autobackup 0" >> install.profile
-           echo "tlpdbopt_sys_bin /usr/bin" >> install.profile
-           sudo perl ./install-tl --no-interaction  -profile install.profile -repository ftp://tug.org/historic/systems/texlive/2023/tlnet-final
-           ls -l /usr/local/texlive/2023/bin
-           export PATH=/usr/local/texlive/2023/bin/x86_64-linux:${PATH}
-           sudo /usr/local/texlive/2023/bin/x86_64-linux/tlmgr install unicode-math
-           sudo /usr/local/texlive/2023/bin/x86_64-linux/tlmgr install lualatex-math
-           sudo /usr/local/texlive/2023/bin/x86_64-linux/tlmgr install xcolor
-           sudo /usr/local/texlive/2023/bin/x86_64-linux/tlmgr install luatexbase
-           sudo /usr/local/texlive/2023/bin/x86_64-linux/tlmgr install selnolig
-           sudo /usr/local/texlive/2023/bin/x86_64-linux/tlmgr install titling
+           sudo perl ./install-tl --no-interaction  -profile ../tex.profile -repository ftp://tug.org/historic/systems/texlive/2023/tlnet-final
+           uname -i
+           ls -l /usr/local/bin
+           export PATH=/usr/local/bin:${PATH}
+           sudo tlmgr install unicode-math
+           sudo tlmgr install lualatex-math
+           sudo tlmgr install xcolor
+           sudo tlmgr install luatexbase
+           sudo tlmgr install selnolig
+           sudo tlmgr install titling
+           sudo tlmgr install koma-script
         
            
-      - uses: actions/checkout@v4
-      - name: Install pandoc
-        run: |
-          wget -O pandoc.deb https://github.com/jgm/pandoc/releases/download/3.1.13/pandoc-3.1.13-1-amd64.deb
-          sudo dpkg -i $DEB pandoc.deb
-          
 
-      - name: Install mdBook
-        run: |
-          curl --proto '=https' --tlsv1.2 https://sh.rustup.rs -sSf -y | sh
-          rustup update
-          cargo install --version ${MDBOOK_VERSION} mdbook
-          cargo install --version ${MDBOOK_PANDOC_VERSION} mdbook-pandoc
-
- 
       - name: Install Google Fonts
         run: |
           wget -O Hind-Light.ttf https://github.com/google/fonts/raw/main/ofl/hind/Hind-Light.ttf
@@ -87,7 +90,7 @@ jobs:
         id: pages
         uses: actions/configure-pages@v5
       - name: Build with mdBook
-        run: export PATH=/usr/local/texlive/2023/bin/x86_64-linux:${PATH} && mdbook build
+        run: mdbook build
       - name: Copy the PDF to html root
         run: cp ./book/pandoc/pdf/IETF-Ornithology.pdf ./book/html
       - name: Upload artifact
