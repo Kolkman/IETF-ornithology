@@ -6,7 +6,5 @@ You can read the Ornithology through as a [web page](https://internetsociety.git
 
 ***This repository moved recently***
 
-The source for this document can now be found in the [src](https://GitHub.com/internetsociety/IETF-Ornithology/src) of the 
-[https://github.com/internetsociety/IETF-Ornithology/]() repository. 
-
+The source for this document can now be found in the [Internet Society repository ](https://GitHub.com/internetsociety/IETF-Ornithology
 
